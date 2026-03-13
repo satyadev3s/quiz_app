@@ -10,7 +10,7 @@ Users can select a subject, answer questions, and view their score with animated
 
 View the live project here:
 
-https://your-app-name.onrender.com
+https://quiz-gen-rx7b.onrender.com/
 
 ---
 
