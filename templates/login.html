@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz.io - Auth</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+background: linear-gradient(135deg,#6366f1,#9333ea);
+}
+
+.logo{
+font-size:32px;
+font-weight:800;
+text-align:center;
+color:white;
+margin-bottom:20px;
+letter-spacing:2px;
+}
+
+.logo span{
+color:#facc15;
+}
+
+.card{
+animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+}
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+<h1 class="logo">Quiz<span>.io</span></h1>
+
+<div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden card">
+
+<!-- Tabs -->
+<div class="flex border-b">
+<button id="loginTab" onclick="toggleAuth('login')" class="w-1/2 py-5 font-bold text-indigo-600 border-b-2 border-indigo-600">Login</button>
+<button id="registerTab" onclick="toggleAuth('register')" class="w-1/2 py-5 font-bold text-gray-400 hover:text-indigo-600">Register</button>
+</div>
+
+<div class="p-8">
+
+<!-- LOGIN -->
+<form id="loginForm" action="{{ url_for('login') }}" method="POST" class="space-y-5">
+
+<h2 class="text-2xl font-bold text-gray-800">Welcome Back!</h2>
+
+<div>
+<label>Email Address</label>
+<input type="email" name="email" required class="w-full mt-1 p-3 border rounded-xl">
+</div>
+
+<div>
+<label>Password</label>
+<input type="password" name="password" required class="w-full mt-1 p-3 border rounded-xl">
+</div>
+
+<button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold">
+Sign In
+</button>
+
+</form>
+
+
+<!-- REGISTER -->
+<form id="registerForm" action="{{ url_for('register') }}" method="POST" class="space-y-5 hidden">
+
+<h2 class="text-2xl font-bold text-gray-800">Create Account</h2>
+
+<div>
+<label>Full Name</label>
+<input type="text" name="name" required class="w-full mt-1 p-3 border rounded-xl">
+</div>
+
+<div>
+<label>Email</label>
+<input type="email" name="email" required class="w-full mt-1 p-3 border rounded-xl">
+</div>
+
+<div>
+<label>Password</label>
+<input type="password" name="password" required class="w-full mt-1 p-3 border rounded-xl">
+</div>
+
+<button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold">
+Sign Up
+</button>
+
+</form>
+
+<div class="mt-6 text-center">
+<a href="{{ url_for('home') }}" class="text-sm text-gray-400 hover:text-indigo-600">← Back to Home</a>
+</div>
+
+</div>
+</div>
+
+<script>
+function toggleAuth(mode){
+
+const loginF = document.getElementById('loginForm');
+const registerF = document.getElementById('registerForm');
+
+const loginT = document.getElementById('loginTab');
+const registerT = document.getElementById('registerTab');
+
+if(mode==='login'){
+loginF.classList.remove('hidden');
+registerF.classList.add('hidden');
+loginT.classList.add('text-indigo-600','border-b-2','border-indigo-600');
+registerT.classList.remove('text-indigo-600','border-b-2','border-indigo-600');
+}
+else{
+loginF.classList.add('hidden');
+registerF.classList.remove('hidden');
+registerT.classList.add('text-indigo-600','border-b-2','border-indigo-600');
+loginT.classList.remove('text-indigo-600','border-b-2','border-indigo-600');
+}
+}
+</script>
+
+</body>
+</html>

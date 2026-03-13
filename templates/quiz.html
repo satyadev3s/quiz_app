@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Quiz | QuizMaster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { cursor: none; background: #f8fafc; overflow: hidden; }
+        .cursor-dot { width: 6px; height: 6px; background: #4f46e5; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
+        .option-btn:hover { transform: translateX(10px); background: #f5f3ff; border-color: #4f46e5; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="cursor-dot"></div>
+<div class="fixed top-6 right-8 z-50">
+    <a href="{{ url_for('home') }}" class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition">
+        Logout
+    </a>
+</div>
+    <!-- 1. SUBJECTS SELECTION -->
+    <div id="selection-view" class="max-w-4xl w-full p-6 text-center">
+        <h1 class="text-5xl font-black mb-12 italic">CHOOSE YOUR FIELD.</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <button onclick="startQuiz('Maths')" class="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-indigo-600 group">
+                <span class="text-4xl block mb-2 group-hover:scale-125 transition">📐</span>
+                <span class="font-black text-xl">MATHEMATICS</span>
+            </button>
+            <button onclick="startQuiz('Science')" class="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-indigo-600 group">
+                <span class="text-4xl block mb-2 group-hover:scale-125 transition">🧪</span>
+                <span class="font-black text-xl">SCIENCE</span>
+            </button>
+            <button onclick="startQuiz('Biology')" class="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-indigo-600 group">
+                <span class="text-4xl block mb-2 group-hover:scale-125 transition">🧬</span>
+                <span class="font-black text-xl">BIOLOGY</span>
+            </button>
+            <button onclick="startQuiz('English')" class="bg-white p-10 rounded-3xl shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-indigo-600 group">
+                <span class="text-4xl block mb-2 group-hover:scale-125 transition">📖</span>
+                <span class="font-black text-xl">ENGLISH</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. ACTIVE QUIZ -->
+    <div id="quiz-view" class="hidden w-full max-w-2xl px-6">
+        <div class="mb-8">
+            <div class="flex justify-between font-black mb-2 text-indigo-600">
+                <span id="subject-label">MATHS</span>
+                <span id="progress-label">1/3</span>
+            </div>
+            <div class="w-full bg-gray-200 h-2 rounded-full">
+                <div id="progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all duration-500" style="width: 33%"></div>
+            </div>
+        </div>
+        <div class="bg-white rounded-[40px] p-12 shadow-2xl relative overflow-hidden">
+            <h2 id="question-text" class="text-3xl font-bold mb-10 leading-snug italic text-gray-800">Question text goes here?</h2>
+            <div id="options-container" class="space-y-4">
+                <!-- Options injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SCORE VIEW -->
+    <div id="score-view" class="hidden text-center">
+        <h2 class="text-9xl font-black text-indigo-600 mb-4 animate-bounce" id="final-score-val">0</h2>
+        <p class="text-2xl font-bold mb-10 uppercase tracking-widest">Points Secured!</p>
+        <button onclick="location.reload()" class="bg-indigo-600 text-white px-12 py-5 rounded-3xl font-black shadow-xl">PLAY AGAIN</button>
+    </div>
+
+    <script>
+        const questions = {
+            'Maths': [{q: "Square of 12?", o: ["144","122","164","148"], c: 0}, {q: "Sum of angles in triangle?", o: ["180","90","360","270"], c: 0}],
+            'Science': [{q: "Light speed is fastest in?", o: ["Water","Air","Vacuum","Glass"], c: 2}],
+            'Biology': [{q: "Human cell contains nucleus?", o: ["True","False"], c: 0}],
+            'English': [{q: "Verb in: 'Birds fly high'?", o: ["Birds","Fly","High","None"], c: 1}]
+        };
+
+        let currentSet = [], qIdx = 0, score = 0;
+
+        function startQuiz(sub) {
+            currentSet = questions[sub] || questions['Maths'];
+            gsap.to('#selection-view', {opacity: 0, scale: 0.9, duration: 0.4, onComplete: () => {
+                document.getElementById('selection-view').classList.add('hidden');
+                document.getElementById('quiz-view').classList.remove('hidden');
+                document.getElementById('subject-label').innerText = sub;
+                loadQuestion();
+            }});
+        }
+
+        function loadQuestion() {
+            const data = currentSet[qIdx];
+            document.getElementById('question-text').innerText = data.q;
+            document.getElementById('progress-label').innerText = `${qIdx+1}/${currentSet.length}`;
+            document.getElementById('progress-bar').style.width = `${((qIdx+1)/currentSet.length)*100}%`;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            data.o.forEach((opt, i) => {
+                const b = document.createElement('button');
+                b.className = "option-btn w-full p-6 text-left border-2 border-gray-100 rounded-2xl font-bold transition-all duration-300 flex justify-between";
+                b.innerHTML = `<span>${opt}</span><span class='opacity-20'>0${i+1}</span>`;
+                b.onclick = () => handleAnswer(i);
+                container.appendChild(b);
+            });
+            gsap.from('.option-btn', {x: 50, opacity: 0, stagger: 0.1});
+        }
+
+        function handleAnswer(i) {
+            if(i === currentSet[qIdx].c) score++;
+            qIdx++;
+            if(qIdx < currentSet.length) loadQuestion();
+            else {
+                gsap.to('#quiz-view', {opacity: 0, duration: 0.4, onComplete: showScore});
+            }
+        }
+
+        function showScore() {
+            document.getElementById('quiz-view').classList.add('hidden');
+            document.getElementById('score-view').classList.remove('hidden');
+            document.getElementById('final-score-val').innerText = score;
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#4f46e5', '#ffffff'] });
+        }
+
+        const dot = document.querySelector('.cursor-dot');
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(dot, {x: e.clientX, y: e.clientY, duration: 0});
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster | Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body { cursor: none; scroll-behavior: smooth; overflow-x: hidden; }
+        .cursor-dot { width: 8px; height: 8px; background: #4f46e5; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; }
+        .cursor-outline { width: 40px; height: 40px; border: 2px solid #4f46e5; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.15s ease-out; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        .hero-gradient { background: radial-gradient(circle at top right, #eef2ff, #ffffff, #f5f3ff); }
+    </style>
+</head>
+<body class="hero-gradient text-gray-900">
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="text-2xl font-black text-indigo-600 tracking-tighter italic">QUIZ.IO</div>
+            <div class="hidden md:flex space-x-10 font-bold uppercase text-xs tracking-widest">
+                <a href="{{ url_for('home') }}" class="hover:text-indigo-600 transition">Home</a>
+                <a href="{{ url_for('about') }}" class="hover:text-indigo-600 transition">About</a>
+                <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+            </div>
+            <a href="{{ url_for('login') }}" class="bg-indigo-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-indigo-200 hover:scale-105 transition active:scale-95">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="h-screen flex flex-col justify-center items-center text-center px-4">
+        <h1 class="text-7xl md:text-9xl font-black mb-6 animate__animated animate__fadeInDown">THINK.<br><span class="text-indigo-600">SOLVE.</span></h1>
+        <p class="text-gray-500 max-w-lg mb-8 animate__animated animate__fadeInUp">The world's most interactive quiz platform for students and lifelong learners.</p>
+        <div class="flex space-x-4 animate__animated animate__zoomIn">
+            <a href="{{ url_for('login') }}" class="bg-indigo-600 text-white px-10 py-5 rounded-2xl font-bold">Start Quiz</a>
+            <a href="#about" class="bg-white px-10 py-5 rounded-2xl font-bold border border-gray-200">Learn More</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-32 bg-white">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-4xl font-bold mb-12 text-center">About Our Mission</h2>
+            <div class="space-y-8 text-xl text-gray-600 leading-relaxed">
+                <p>At <span class="text-indigo-600 font-bold">Quiz.io</span>, we believe that education should be more than just reading from a screen. It should be an adventure. Our platform is designed to bridge the gap between traditional learning and modern technology.</p>
+                <p>Whether you are a student preparing for finals in <span class="font-bold text-gray-800">Biology</span> or <span class="font-bold text-gray-800">Mathematics</span>, or simply someone who loves the beauty of the <span class="font-bold text-gray-800">English</span> language, we provide a gamified environment that challenges your brain and rewards your progress.</p>
+                <p>Founded in 2024, our mission is to provide high-quality, free educational tools to every corner of the globe. Join over 1 million users today and start your journey to mastery.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 bg-gray-50">
+        <div class="max-w-xl mx-auto px-6 glass p-12 rounded-3xl shadow-xl">
+            <h2 class="text-3xl font-bold mb-8 text-center">Get in Touch</h2>
+       <form class="space-y-6" method="POST" action="{{ url_for('contact') }}">
+
+<input 
+type="text"
+name="name"
+placeholder="Full Name"
+class="w-full bg-transparent border-b-2 border-gray-200 py-3 outline-none focus:border-indigo-600 transition"
+required>
+
+<input 
+type="email"
+name="email"
+placeholder="Email Address"
+class="w-full bg-transparent border-b-2 border-gray-200 py-3 outline-none focus:border-indigo-600 transition"
+required>
+
+<textarea
+name="message"
+placeholder="Your Message"
+rows="4"
+class="w-full bg-transparent border-b-2 border-gray-200 py-3 outline-none focus:border-indigo-600 transition"
+required></textarea>
+
+<button
+type="submit"
+class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black shadow-lg shadow-indigo-100 uppercase tracking-widest">
+Send Message
+</button>
+
+</form>
+        </div>
+    </section>
+
+    <script>
+        // Custom Cursor Logic
+        const dot = document.querySelector('.cursor-dot');
+        const outline = document.querySelector('.cursor-outline');
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(dot, {x: e.clientX, y: e.clientY, duration: 0});
+            gsap.to(outline, {x: e.clientX - 16, y: e.clientY - 16, duration: 0.15});
+        });
+    </script>
+</body>
+</html>
